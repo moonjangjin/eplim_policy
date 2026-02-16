@@ -77,6 +77,14 @@
         .animate-fade-in {
             animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+
+        .search-results-dropdown {
+            animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
     
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -158,15 +166,48 @@
             if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
           }, [chatHistory, isTyping]);
 
-          const filteredRules = useMemo(() => {
-            if (!searchQuery) return null;
+          const searchResults = useMemo(() => {
+            if (!searchQuery.trim()) return [];
             const q = searchQuery.toLowerCase();
-            return {
-              constitution: GOVERNANCE_DATA.constitution.filter(r => r.title.includes(q) || r.description.includes(q)),
-              commonRules: GOVERNANCE_DATA.commonRules.filter(r => r.title.includes(q) || r.items.some(i => i.includes(q))),
-              modules: GOVERNANCE_DATA.modules.filter(m => m.name.includes(q) || m.rules.some(r => r.includes(q)))
-            };
+            const results = [];
+
+            GOVERNANCE_DATA.constitution.forEach(r => {
+              if (r.title.toLowerCase().includes(q) || r.description.toLowerCase().includes(q)) {
+                results.push({ type: '규정', title: r.title, targetId: `rule-${r.id}` });
+              }
+            });
+
+            GOVERNANCE_DATA.commonRules.forEach(r => {
+              if (r.title.toLowerCase().includes(q) || r.items.some(i => i.toLowerCase().includes(q))) {
+                results.push({ type: '공통 규칙', title: r.title, targetId: `common-${r.id}` });
+              }
+            });
+
+            GOVERNANCE_DATA.modules.forEach(m => {
+              if (m.name.toLowerCase().includes(q) || m.rules.some(r => r.toLowerCase().includes(q))) {
+                results.push({ type: '모듈 가이드', title: m.name, targetId: `module-${m.id}` });
+              }
+            });
+
+            return results.slice(0, 5); // 최대 5개 노출
           }, [searchQuery]);
+
+          const scrollToTarget = (id) => {
+            const element = document.getElementById(id);
+            if (element) {
+              const offset = 100; // 헤더 높이 고려
+              const bodyRect = document.body.getBoundingClientRect().top;
+              const elementRect = element.getBoundingClientRect().top;
+              const elementPosition = elementRect - bodyRect;
+              const offsetPosition = elementPosition - offset;
+
+              window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+              });
+            }
+            setSearchQuery('');
+          };
 
           const handleSendMessage = async () => {
             if (!chatInput.trim() || isTyping) return;
@@ -225,123 +266,115 @@
                   
                   {/* Search Bar */}
                   <div className="max-w-2xl mx-auto search-container relative">
-                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-white/20" />
                     <input 
                       type="text" 
                       placeholder="규정, 모듈 또는 키워드를 검색하세요..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-[2rem] py-6 pl-16 pr-6 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-lg transition-all"
+                      className="w-full bg-white/5 border border-white/10 rounded-[2rem] py-6 pl-8 pr-16 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-lg transition-all"
                     />
+                    <Search className="absolute right-8 top-1/2 -translate-y-1/2 w-6 h-6 text-white/40" />
+                    
+                    {/* Search Results Dropdown */}
+                    {searchResults.length > 0 && (
+                      <div className="absolute top-full left-0 right-0 mt-4 glass-panel border border-white/10 rounded-[2rem] overflow-hidden z-50 shadow-2xl search-results-dropdown">
+                        <div className="p-4 space-y-1">
+                          {searchResults.map((result, idx) => (
+                            <button 
+                              key={idx}
+                              onClick={() => scrollToTarget(result.targetId)}
+                              className="w-full flex items-center justify-between p-4 hover:bg-white/10 rounded-2xl transition-all text-left group"
+                            >
+                              <div className="flex items-center gap-4">
+                                <span className="text-[10px] font-black px-2 py-1 rounded-md bg-white/5 text-indigo-400 uppercase tracking-widest">{result.type}</span>
+                                <span className="font-bold text-white/80 group-hover:text-white">{result.title}</span>
+                              </div>
+                              <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-indigo-500 transition-colors" />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </section>
 
               <main className="container mx-auto px-6 py-20 space-y-40">
-                {/* Search Results or Full Content */}
-                {searchQuery && filteredRules ? (
-                  <section className="animate-fade-in">
-                    <h2 className="text-3xl font-black mb-12 flex items-center gap-4">
-                      검색 결과 <span className="text-indigo-500 text-lg">{searchQuery}</span>
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                      {filteredRules.constitution.map(r => (
-                        <div key={r.id} className="glass-panel p-8 rounded-[2rem]">
-                          <Shield className="w-6 h-6 text-indigo-500 mb-4" />
-                          <h3 className="text-xl font-black mb-4">{r.title}</h3>
-                          <p className="text-white/60 text-sm leading-relaxed">{r.description}</p>
-                        </div>
-                      ))}
-                      {filteredRules.modules.map(m => (
-                        <div key={m.id} className="glass-panel p-8 rounded-[2rem]">
-                          <Box className="w-6 h-6 text-indigo-500 mb-4" />
-                          <h3 className="text-xl font-black mb-4">{m.name}</h3>
-                          <ul className="space-y-2">
-                            {m.rules.map((r, i) => <li key={i} className="text-sm text-white/50">• {r}</li>)}
-                          </ul>
-                        </div>
-                      ))}
+                {/* Constitution */}
+                <section id="규정" className="animate-fade-in">
+                  <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 border-b border-white/5 pb-10">
+                    <div className="space-y-2">
+                      <h2 className="text-4xl md:text-5xl font-black tracking-tighter">AI 규정</h2>
+                      <p className="text-white/40 text-lg font-medium">이플림의 모든 AI 활용의 근간이 되는 최상위 원칙</p>
                     </div>
-                  </section>
-                ) : (
-                  <>
-                    {/* Constitution */}
-                    <section id="규정" className="animate-fade-in">
-                      <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 border-b border-white/5 pb-10">
-                        <div className="space-y-2">
-                          <h2 className="text-4xl md:text-5xl font-black tracking-tighter">AI 규정</h2>
-                          <p className="text-white/40 text-lg font-medium">이플림의 모든 AI 활용의 근간이 되는 최상위 원칙</p>
+                    <span className="px-4 py-1.5 bg-indigo-500/10 text-indigo-400 text-[11px] font-black uppercase tracking-[0.2em] border border-indigo-500/20 rounded-full mt-4 md:mt-0">FIXED POLICY</span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {GOVERNANCE_DATA.constitution.map(r => (
+                      <div key={r.id} id={`rule-${r.id}`} className="glass-panel p-10 rounded-[2.5rem] relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-10 transition-opacity">
+                          <Shield className="w-24 h-24" />
                         </div>
-                        <span className="px-4 py-1.5 bg-indigo-500/10 text-indigo-400 text-[11px] font-black uppercase tracking-[0.2em] border border-indigo-500/20 rounded-full mt-4 md:mt-0">FIXED POLICY</span>
+                        <CheckCircle2 className="w-8 h-8 text-indigo-500 mb-8" />
+                        <h3 className="text-2xl font-black mb-6">{r.title}</h3>
+                        <p className="text-white/60 text-lg leading-relaxed">{r.description}</p>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {GOVERNANCE_DATA.constitution.map(r => (
-                          <div key={r.id} className="glass-panel p-10 rounded-[2.5rem] relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-10 transition-opacity">
-                              <Shield className="w-24 h-24" />
-                            </div>
-                            <CheckCircle2 className="w-8 h-8 text-indigo-500 mb-8" />
-                            <h3 className="text-2xl font-black mb-6">{r.title}</h3>
-                            <p className="text-white/60 text-lg leading-relaxed">{r.description}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </section>
+                    ))}
+                  </div>
+                </section>
 
-                    {/* Common Rules */}
-                    <section id="공통규칙">
-                      <div className="flex flex-col md:items-start mb-16 border-b border-white/5 pb-10">
-                        <h2 className="text-4xl md:text-5xl font-black tracking-tighter">공통 운영 규칙</h2>
-                        <p className="text-white/40 text-lg font-medium">실무 프로세스 전반에 적용되는 실행 지침</p>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                        {GOVERNANCE_DATA.commonRules.map(r => (
-                          <div key={r.id} className="glass-panel p-10 rounded-[2.5rem]">
-                            <h3 className="text-2xl font-black mb-10 flex items-center gap-5">
-                              <span className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-indigo-400 font-black text-xl border border-white/10">{r.id.replace('r','')}</span>
-                              {r.title}
-                            </h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                              {r.items.map((item, idx) => (
-                                <div key={idx} className="flex items-center gap-4 text-white/70 font-medium">
-                                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
-                                  {item}
-                                </div>
-                              ))}
+                {/* Common Rules */}
+                <section id="공통규칙">
+                  <div className="flex flex-col md:items-start mb-16 border-b border-white/5 pb-10">
+                    <h2 className="text-4xl md:text-5xl font-black tracking-tighter">공통 운영 규칙</h2>
+                    <p className="text-white/40 text-lg font-medium">실무 프로세스 전반에 적용되는 실행 지침</p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    {GOVERNANCE_DATA.commonRules.map(r => (
+                      <div key={r.id} id={`common-${r.id}`} className="glass-panel p-10 rounded-[2.5rem]">
+                        <h3 className="text-2xl font-black mb-10 flex items-center gap-5">
+                          <span className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-indigo-400 font-black text-xl border border-white/10">{r.id.replace('r','')}</span>
+                          {r.title}
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          {r.items.map((item, idx) => (
+                            <div key={idx} className="flex items-center gap-4 text-white/70 font-medium">
+                              <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                              {item}
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </section>
+                    ))}
+                  </div>
+                </section>
 
-                    {/* Modules */}
-                    <section id="모듈가이드">
-                      <div className="flex flex-col md:items-start mb-16 border-b border-white/5 pb-10">
-                        <h2 className="text-4xl md:text-5xl font-black tracking-tighter">모듈별 가이드라인</h2>
-                        <p className="text-white/40 text-lg font-medium">각 비즈니스 영역별 특화 수칙</p>
+                {/* Modules */}
+                <section id="모듈가이드">
+                  <div className="flex flex-col md:items-start mb-16 border-b border-white/5 pb-10">
+                    <h2 className="text-4xl md:text-5xl font-black tracking-tighter">모듈별 가이드라인</h2>
+                    <p className="text-white/40 text-lg font-medium">각 비즈니스 영역별 특화 수칙</p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {GOVERNANCE_DATA.modules.map(m => (
+                      <div key={m.id} id={`module-${m.id}`} className="glass-panel p-10 rounded-[2rem]">
+                        <div className="flex items-center justify-between mb-8">
+                          <Box className="w-8 h-8 text-indigo-500" />
+                          <span className="text-[10px] font-black uppercase text-white/20 tracking-widest">{m.id}</span>
+                        </div>
+                        <h3 className="text-2xl font-black mb-8">{m.name}</h3>
+                        <div className="space-y-4">
+                          {m.rules.map((rule, idx) => (
+                            <p key={idx} className="text-white/60 text-base flex items-start gap-3">
+                              <span className="mt-2 w-1 h-1 rounded-full bg-indigo-500 shrink-0" />
+                              {rule}
+                            </p>
+                          ))}
+                        </div>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {GOVERNANCE_DATA.modules.map(m => (
-                          <div key={m.id} className="glass-panel p-10 rounded-[2rem]">
-                            <div className="flex items-center justify-between mb-8">
-                              <Box className="w-8 h-8 text-indigo-500" />
-                              <span className="text-[10px] font-black uppercase text-white/20 tracking-widest">{m.id}</span>
-                            </div>
-                            <h3 className="text-2xl font-black mb-8">{m.name}</h3>
-                            <div className="space-y-4">
-                              {m.rules.map((rule, idx) => (
-                                <p key={idx} className="text-white/60 text-base flex items-start gap-3">
-                                  <span className="mt-2 w-1 h-1 rounded-full bg-indigo-500 shrink-0" />
-                                  {rule}
-                                </p>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </section>
-                  </>
-                )}
+                    ))}
+                  </div>
+                </section>
 
                 {/* FAQ Section */}
                 <section id="FAQ" className="max-w-4xl mx-auto">
