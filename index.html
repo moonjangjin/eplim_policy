@@ -3,14 +3,13 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>EPLIM AI Governance Portal</title>
     
     <!-- SEO 및 소셜 공유용 메타 태그 -->
     <meta name="description" content="EPLIM의 AI 운영 헌법 및 모듈별 세부 규칙 관리 포털">
     <meta property="og:title" content="EPLIM AI Governance Portal">
     <meta property="og:description" content="AI 원칙과 실무 지침을 한눈에 확인하세요.">
-    <meta property="og:type" content="website">
     
     <!-- 스타일 및 폰트 로드 -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,47 +17,48 @@
     
     <style>
         :root {
-            --indigo-glow: rgba(99, 102, 241, 0.2);
+            --indigo-glow: rgba(99, 102, 241, 0.25);
         }
         body {
             font-family: 'Inter', 'Noto Sans KR', sans-serif;
-            background-color: #050505; /* 더 깊은 블랙으로 대비 증가 */
+            background-color: #030303; /* 대비를 위해 더 어두운 배경 선택 */
             color: #ffffff;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             overscroll-behavior-y: none;
-            letter-spacing: -0.02em; /* 한국어 가독성을 위한 자간 조정 */
+            letter-spacing: -0.025em; /* 가독성을 위한 자간 좁힘 */
+            line-height: 1.6;
         }
         .glass-panel {
-            background: rgba(255, 255, 255, 0.04); /* 투명도 소폭 상향하여 텍스트 토대 강화 */
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        @media (hover: hover) {
-            .glass-panel:hover {
-                background: rgba(255, 255, 255, 0.07);
-                border-color: rgba(99, 102, 241, 0.4);
-                box-shadow: 0 12px 40px -10px var(--indigo-glow);
-            }
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
         }
         .text-gradient {
             background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        /* 가독성을 위한 텍스트 섀도우 */
+        .readable-text {
+            text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+        }
         /* 스크롤바 숨기기 */
         ::-webkit-scrollbar { width: 0px; background: transparent; }
         
-        .safe-bottom {
-            padding-bottom: env(safe-area-inset-bottom);
+        .safe-pb {
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
         }
-
-        /* 텍스트 렌더링 최적화 */
-        p, span, li {
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        
+        /* 모바일 꽉 찬 카드 효과 */
+        @media (max-width: 640px) {
+            .mobile-full {
+                width: 100%;
+                border-radius: 1.5rem;
+            }
         }
     </style>
     
@@ -83,12 +83,12 @@
     <div id="root"></div>
 
     <script type="text/babel" data-type="module">
-        import React, { useState, useMemo, useEffect, useRef } from 'react';
+        import React, { useState, useEffect, useRef } from 'react';
         import ReactDOM from 'react-dom/client';
         import { 
           Shield, Settings, Box, Download, MessageSquare, 
           ChevronRight, CheckCircle2, ArrowDown, Sparkles, 
-          X, Send, Loader2, ExternalLink, ChevronDown 
+          X, Send, Loader2, ChevronDown 
         } from 'lucide-react';
         import { GoogleGenAI } from "@google/genai";
 
@@ -96,7 +96,7 @@
 
         const GOVERNANCE_DATA = {
           constitution: [
-            { id: 'c1', title: '1. 인간 중심 원칙', description: 'AI는 인간의 판단을 보조하는 도구이며, 최종 의사결정과 책임은 오직 인간에게 있습니다.' },
+            { id: 'c1', title: '1. 인간 중심 원칙', description: 'AI는 인간의 판단을 보조하는 도구이며, 최종 의사결정과 책임은 인간에게 있습니다.' },
             { id: 'c2', title: '2. 투명성 및 설명가능성', description: 'AI의 생성 과정과 근거를 논리적으로 설명할 수 있어야 하며, 사용 여부를 명시합니다.' },
             { id: 'c3', title: '3. 데이터 보안 준수', description: '민감 정보는 AI 시스템에 절대 입력하지 않으며, 보안 법규를 엄격히 준수합니다.' },
             { id: 'c4', title: '4. 공정성 유지', description: '결과물에서 차별이나 편향이 발생하지 않도록 상시 모니터링하고 즉각 개선합니다.' },
@@ -105,7 +105,7 @@
           modules: [
             { id: 'm1', name: '콘텐츠 모듈', rules: ['브랜드 톤앤매너 엄격 준수', 'AI 생성 표기 의무화', '표절 검사 단계 필수 진행'] },
             { id: 'm2', name: '이커머스 모듈', rules: ['제품 정보 100% 일치 확인', '허위/과장 광고 생성 금지', '리뷰 왜곡 행위 원천 차단'] },
-            { id: 'm3', name: '생산성 모듈', rules: ['단순 반복 작업 우선 자동화', '비용 대비 효율성 상시 측정', '핵심 프로세스 인간 최종 검수'] },
+            { id: 'm3', name: '생산성 모듈', rules: ['단순 반복 작업 우선 자동화', '비용 대비 효율성 상시 측정', '핵심 프로세스 최종 검수'] },
             { id: 'm4', name: '데이터 분석 모듈', rules: ['데이터 출처 명확히 표기', '개인정보 비식별 조치 필수', '분석 오차 범위 투명 공개'] },
             { id: 'm5', name: '자동화 모듈', rules: ['배포 전 코드 리뷰 완료', '시스템 오류 대응 알림 설정', '로그 데이터 1년 이상 보관'] },
           ]
@@ -115,7 +115,7 @@
           const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
           const response = await ai.models.generateContent({
             model: 'gemini-3-flash-preview',
-            contents: `You are an AI Governance Expert for EPLIM. Context: ${context}\n\nQuestion: ${question}\n\nRespond in Korean clearly and concisely.`,
+            contents: `You are an AI Governance Expert for EPLIM. Context: ${context}\n\nQuestion: ${question}\n\nRespond in Korean clearly.`,
           });
           return response.text;
         };
@@ -139,9 +139,7 @@
             const blob = new Blob([output], { type: 'text/markdown' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url;
-            a.download = 'EPLIM_Rules.md';
-            a.click();
+            a.href = url; a.download = 'EPLIM_Rules.md'; a.click();
             URL.revokeObjectURL(url);
           };
 
@@ -155,106 +153,100 @@
               const res = await askRuleAssistant(userMsg, JSON.stringify(GOVERNANCE_DATA));
               setChatHistory(prev => [...prev, { role: 'assistant', content: res }]);
             } catch (error) {
-              setChatHistory(prev => [...prev, { role: 'assistant', content: '연결 오류가 발생했습니다. 잠시 후 다시 시도해주세요.' }]);
+              setChatHistory(prev => [...prev, { role: 'assistant', content: '연결 오류가 발생했습니다.' }]);
             } finally {
               setIsTyping(false);
             }
           };
 
           return (
-            <div className="min-h-screen bg-[#050505] text-white overflow-x-hidden">
-              {/* Animated BG - 명암비 조절 */}
-              <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-30">
-                <div className="absolute top-[-15%] left-[-10%] w-[100%] h-[70%] bg-indigo-900/20 blur-[150px] rounded-full animate-pulse" />
-                <div className="absolute bottom-[-15%] right-[-10%] w-[100%] h-[70%] bg-blue-900/20 blur-[150px] rounded-full animate-pulse" />
+            <div className="min-h-screen bg-[#030303] text-white">
+              {/* Animated BG */}
+              <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-25">
+                <div className="absolute top-[-20%] left-[-10%] w-[120%] h-[120%] bg-indigo-900/15 blur-[120px] rounded-full animate-pulse" />
               </div>
 
-              <div className="container mx-auto px-5 md:px-10 py-12 md:py-24 relative z-10 max-w-6xl">
+              <div className="container mx-auto px-4 sm:px-8 py-10 md:py-24 relative z-10 max-w-6xl">
                 {/* Header */}
-                <header className="flex flex-col gap-8 mb-20 md:mb-32">
-                  <div className="space-y-6">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/15 border border-indigo-400/30 text-indigo-300 text-[11px] md:text-xs font-black tracking-widest uppercase">
-                      <Sparkles className="w-3.5 h-3.5" /> Official Governance Portal
+                <header className="flex flex-col gap-6 md:gap-10 mb-16 md:mb-32">
+                  <div className="space-y-5">
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/20 border border-indigo-400/40 text-indigo-300 text-[10px] md:text-xs font-black tracking-widest uppercase">
+                      <Sparkles className="w-3.5 h-3.5" /> Official Governance
                     </div>
-                    <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-gradient leading-[1.05] md:leading-[1.1]">
-                      EPLIM <span className="text-white/30">AI</span><br />Governance
+                    <h1 className="text-[2.75rem] md:text-8xl font-black tracking-tighter text-gradient leading-[1.05] md:leading-[1.1]">
+                      EPLIM <span className="text-white/20">AI</span><br />Governance
                     </h1>
-                    <p className="text-white/80 text-lg md:text-2xl max-w-2xl font-medium leading-relaxed">
-                      에플림의 혁신을 이끄는 <span className="text-indigo-400 font-bold">AI 원칙과 실무 가이드라인</span>을 한눈에 확인하세요.
+                    <p className="text-white/85 text-lg md:text-2xl max-w-2xl font-medium leading-relaxed readable-text">
+                      에플림의 혁신을 이끄는 <span className="text-indigo-400 font-bold">AI 원칙과 실무 지침</span>을 한눈에 확인하세요.
                     </p>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <button onClick={handleExport} className="w-full sm:w-auto px-10 py-4.5 bg-white/5 border border-white/20 rounded-2xl font-bold flex items-center justify-center gap-2.5 transition-all hover:bg-white/10 active:scale-95 text-base shadow-lg">
-                      <Download className="w-5 h-5 text-white/70" /> 정책 다운로드
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:flex gap-3 md:gap-4 mt-4">
+                    <button onClick={handleExport} className="px-6 py-4.5 bg-white/5 border border-white/20 rounded-2xl font-bold flex items-center justify-center gap-2.5 transition-all text-base active:scale-95 shadow-xl">
+                      <Download className="w-5 h-5" /> 정책 다운로드
                     </button>
-                    <button onClick={() => setIsAssistantOpen(true)} className="w-full sm:w-auto px-10 py-4.5 bg-indigo-600 rounded-2xl font-black flex items-center justify-center gap-2.5 shadow-2xl shadow-indigo-500/40 transition-all hover:bg-indigo-500 active:scale-95 text-base">
+                    <button onClick={() => setIsAssistantOpen(true)} className="px-6 py-4.5 bg-indigo-600 rounded-2xl font-black flex items-center justify-center gap-2.5 shadow-2xl shadow-indigo-500/40 transition-all text-base active:scale-95">
                       <MessageSquare className="w-5 h-5" /> AI 어시스턴트
                     </button>
                   </div>
                 </header>
 
-                {/* Flow Visualizer - 가독성 향상 */}
-                <div className="flex flex-col md:grid md:grid-cols-5 gap-4 items-center mb-28 md:mb-40">
-                  <div className="w-full glass-panel p-7 md:p-10 rounded-3xl text-center border-indigo-500/40">
-                    <Shield className="w-8 h-8 text-indigo-400 mx-auto mb-4" />
-                    <h3 className="font-black text-lg md:text-xl text-white">AI 헌법</h3>
-                    <p className="text-xs text-indigo-300/60 mt-2 font-bold uppercase tracking-widest">Core Integrity</p>
+                {/* Flow - Mobile Optimized */}
+                <div className="flex flex-col md:grid md:grid-cols-5 gap-3 md:gap-4 items-center mb-24 md:mb-40">
+                  <div className="w-full glass-panel p-6 md:p-10 rounded-[1.75rem] text-center border-indigo-500/40">
+                    <Shield className="w-7 h-7 text-indigo-400 mx-auto mb-3" />
+                    <h3 className="font-black text-base md:text-xl">AI 헌법</h3>
                   </div>
-                  <div className="flex justify-center opacity-40 py-2">
-                    <ChevronDown className="w-8 h-8 md:hidden animate-bounce text-indigo-400" />
-                    <ChevronRight className="w-8 h-8 hidden md:block text-indigo-400" />
+                  <div className="flex justify-center opacity-40 py-1">
+                    <ChevronDown className="w-6 h-6 md:hidden animate-bounce text-indigo-400" />
+                    <ChevronRight className="w-6 h-6 hidden md:block text-indigo-400" />
                   </div>
-                  <div className="w-full glass-panel p-7 md:p-10 rounded-3xl text-center">
-                    <Settings className="w-8 h-8 text-white/50 mx-auto mb-4" />
-                    <h3 className="font-black text-lg md:text-xl text-white">운영 규칙</h3>
-                    <p className="text-xs text-white/20 mt-2 font-bold uppercase tracking-widest">Protocols</p>
+                  <div className="w-full glass-panel p-6 md:p-10 rounded-[1.75rem] text-center">
+                    <Settings className="w-7 h-7 text-white/50 mx-auto mb-3" />
+                    <h3 className="font-black text-base md:text-xl">운영 규칙</h3>
                   </div>
-                  <div className="flex justify-center opacity-40 py-2">
-                    <ChevronDown className="w-8 h-8 md:hidden animate-bounce text-indigo-400" />
-                    <ChevronRight className="w-8 h-8 hidden md:block text-indigo-400" />
+                  <div className="flex justify-center opacity-40 py-1">
+                    <ChevronDown className="w-6 h-6 md:hidden animate-bounce text-indigo-400" />
+                    <ChevronRight className="w-6 h-6 hidden md:block text-indigo-400" />
                   </div>
-                  <div className="w-full glass-panel p-7 md:p-10 rounded-3xl text-center">
-                    <Box className="w-8 h-8 text-white/50 mx-auto mb-4" />
-                    <h3 className="font-black text-lg md:text-xl text-white">모듈 가이드</h3>
-                    <p className="text-xs text-white/20 mt-2 font-bold uppercase tracking-widest">Execution</p>
+                  <div className="w-full glass-panel p-6 md:p-10 rounded-[1.75rem] text-center">
+                    <Box className="w-7 h-7 text-white/50 mx-auto mb-3" />
+                    <h3 className="font-black text-base md:text-xl text-white">모듈 가이드</h3>
                   </div>
                 </div>
 
                 {/* Sections */}
-                <div className="space-y-32 md:space-y-52">
+                <div className="space-y-24 md:space-y-52">
                   <section>
-                    <div className="flex items-center justify-between mb-12 md:mb-16 border-b border-white/10 pb-8">
+                    <div className="flex items-center justify-between mb-10 md:mb-16 border-b border-white/10 pb-6">
                       <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white">AI 헌법</h2>
-                      <span className="hidden sm:block text-xs font-black text-indigo-400 border border-indigo-400/30 px-4 py-1.5 rounded-full uppercase tracking-widest">Core Policy</span>
+                      <span className="hidden sm:block text-[10px] font-black text-indigo-400 border border-indigo-400/40 px-3.5 py-1.5 rounded-full uppercase">Policy</span>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
                       {GOVERNANCE_DATA.constitution.map(rule => (
-                        <div key={rule.id} className="glass-panel p-8 md:p-12 rounded-[2rem] flex flex-col gap-6 group">
-                          <CheckCircle2 className="w-7 h-7 text-indigo-500" />
-                          <h3 className="text-xl md:text-3xl font-black group-hover:text-indigo-300 transition-colors">{rule.title}</h3>
-                          <p className="text-white/80 text-base md:text-lg leading-relaxed font-medium">{rule.description}</p>
+                        <div key={rule.id} className="glass-panel p-8 md:p-12 rounded-[2rem] flex flex-col gap-5 group">
+                          <CheckCircle2 className="w-6 h-6 text-indigo-500" />
+                          <h3 className="text-xl md:text-2xl font-black">{rule.title}</h3>
+                          <p className="text-white/90 text-[1rem] md:text-lg leading-relaxed font-medium readable-text">{rule.description}</p>
                         </div>
                       ))}
                     </div>
                   </section>
 
                   <section>
-                    <div className="flex items-center justify-between mb-12 md:mb-16 border-b border-white/10 pb-8">
-                      <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white">모듈별 세부 수칙</h2>
+                    <div className="flex items-center justify-between mb-10 md:mb-16 border-b border-white/10 pb-6">
+                      <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white">모듈별 수칙</h2>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
                       {GOVERNANCE_DATA.modules.map(module => (
                         <div key={module.id} className="glass-panel p-8 md:p-12 rounded-[2rem]">
                           <div className="flex items-center gap-4 mb-8">
-                            <div className="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center border border-indigo-500/20">
-                              <Box className="w-6 h-6 text-indigo-400" />
-                            </div>
+                            <Box className="w-6 h-6 text-indigo-400" />
                             <h3 className="text-xl md:text-2xl font-black">{module.name}</h3>
                           </div>
                           <ul className="space-y-4">
                             {module.rules.map((r, idx) => (
-                              <li key={idx} className="flex items-start gap-4 text-base text-white/90 leading-snug font-medium">
-                                <div className="mt-2 w-2 h-2 rounded-full bg-indigo-500 shrink-0 shadow-[0_0_10px_rgba(99,102,241,0.5)]" /> 
+                              <li key={idx} className="flex items-start gap-4 text-base text-white/90 leading-snug font-medium readable-text">
+                                <div className="mt-2 w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0 shadow-[0_0_8px_rgba(99,102,241,0.6)]" /> 
                                 {r}
                               </li>
                             ))}
@@ -265,52 +257,44 @@
                   </section>
                 </div>
 
-                <footer className="mt-40 md:mt-64 pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-8 pb-16">
+                <footer className="mt-40 md:mt-64 pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-8 pb-16 safe-pb">
                   <div className="flex items-center gap-3">
                     <Shield className="w-6 h-6 text-indigo-400" />
-                    <span className="font-black tracking-tighter text-2xl">EPLIM <span className="text-indigo-400 italic">Policy</span></span>
+                    <span className="font-black tracking-tighter text-2xl">EPLIM <span className="text-indigo-400">Policy</span></span>
                   </div>
                   <p className="text-white/40 text-sm font-medium text-center md:text-right">
-                    © 2025 EPLIM AI Governance Board.<br className="md:hidden" /> All Rights Reserved.
+                    © 2025 EPLIM AI Governance Board. All Rights Reserved.
                   </p>
                 </footer>
               </div>
 
-              {/* Chat UI - 가독성 최적화 */}
+              {/* Mobile Full-Screen Assistant */}
               {isAssistantOpen && (
                 <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-6 animate-in fade-in duration-300">
-                  <div className="absolute inset-0 bg-black/95 backdrop-blur-2xl" onClick={() => setIsAssistantOpen(false)} />
-                  <div className="w-full max-w-4xl bg-[#0a0a0a] border-t md:border border-white/15 rounded-t-[2.5rem] md:rounded-[3rem] shadow-2xl flex flex-col h-[94vh] md:h-[88vh] relative z-10 overflow-hidden animate-in slide-in-from-bottom-20 duration-500">
-                    <div className="px-8 py-6 border-b border-white/10 flex items-center justify-between bg-white/[0.03]">
+                  <div className="absolute inset-0 bg-black/95 backdrop-blur-3xl" onClick={() => setIsAssistantOpen(false)} />
+                  <div className="w-full max-w-4xl bg-[#080808] border-t md:border border-white/15 rounded-t-[2.5rem] md:rounded-[3rem] shadow-2xl flex flex-col h-[96vh] md:h-[90vh] relative z-10 overflow-hidden animate-in slide-in-from-bottom-20 duration-500">
+                    <div className="px-6 py-5 md:px-10 md:py-8 border-b border-white/10 flex items-center justify-between bg-white/[0.03]">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-indigo-600/40">
-                          <Sparkles className="w-6 h-6 text-white" />
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-indigo-600 rounded-xl md:rounded-2xl flex items-center justify-center">
+                          <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-white" />
                         </div>
-                        <div>
-                          <h3 className="font-black text-xl text-white">EPLIM Assistant</h3>
-                          <p className="text-xs text-indigo-400 font-bold tracking-widest uppercase">System Online</p>
-                        </div>
+                        <h3 className="font-black text-lg md:text-2xl text-white">EPLIM Assistant</h3>
                       </div>
-                      <button onClick={() => setIsAssistantOpen(false)} className="p-3 hover:bg-white/10 rounded-2xl transition-all">
+                      <button onClick={() => setIsAssistantOpen(false)} className="p-2.5 hover:bg-white/10 rounded-2xl transition-all">
                         <X className="w-7 h-7 text-white/70" />
                       </button>
                     </div>
                     
-                    <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 md:p-10 space-y-8 scroll-smooth">
+                    <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 md:p-12 space-y-8 scroll-smooth">
                       {chatHistory.length === 0 && (
                         <div className="h-full flex flex-col items-center justify-center text-center opacity-30 space-y-6">
-                          <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center border border-white/10">
-                            <MessageSquare className="w-10 h-10 text-white" />
-                          </div>
-                          <div className="space-y-2">
-                            <p className="text-xl font-black text-white">에플림 AI 정책 가이드</p>
-                            <p className="text-base text-white/60 font-medium">거버넌스 원칙이나 실무 수칙에 대해 무엇이든 물어보세요.</p>
-                          </div>
+                          <MessageSquare className="w-16 h-16 text-white" />
+                          <p className="text-xl font-bold">에플림 정책에 대해 무엇이든 물어보세요.</p>
                         </div>
                       )}
                       {chatHistory.map((msg, i) => (
                         <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                          <div className={`max-w-[88%] px-6 py-4.5 rounded-[1.75rem] text-lg md:text-xl font-medium leading-relaxed shadow-xl ${
+                          <div className={`max-w-[90%] px-5 py-4 rounded-[1.5rem] text-base md:text-xl font-medium leading-relaxed readable-text ${
                             msg.role === 'user' 
                               ? 'bg-indigo-600 text-white rounded-tr-none' 
                               : 'bg-white/10 border border-white/20 text-white rounded-tl-none'
@@ -319,24 +303,17 @@
                           </div>
                         </div>
                       ))}
-                      {isTyping && (
-                        <div className="flex justify-start">
-                          <div className="flex items-center gap-3 bg-white/5 px-6 py-4 rounded-full border border-white/10">
-                            <Loader2 className="w-5 h-5 animate-spin text-indigo-400" />
-                            <span className="text-sm font-bold text-white/40 uppercase tracking-widest">규칙 분석 중...</span>
-                          </div>
-                        </div>
-                      )}
+                      {isTyping && <div className="flex justify-start"><Loader2 className="w-5 h-5 animate-spin text-indigo-400" /></div>}
                     </div>
 
-                    <div className="p-8 bg-[#0a0a0a] border-t border-white/10 flex gap-4 safe-bottom">
+                    <div className="p-6 md:p-10 bg-[#080808] border-t border-white/10 flex gap-3 safe-pb">
                       <input 
                         type="text" value={chatInput} onChange={e => setChatInput(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && handleSendMessage()}
-                        placeholder="궁금한 내용을 입력하세요..."
-                        className="flex-1 bg-white/5 border border-white/20 rounded-2xl px-8 py-5 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-lg text-white placeholder:text-white/20 transition-all"
+                        placeholder="메시지를 입력하세요..."
+                        className="flex-1 bg-white/5 border border-white/20 rounded-2xl px-6 py-4.5 md:py-6 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-[16px] md:text-xl text-white placeholder:text-white/20 transition-all"
                       />
-                      <button onClick={handleSendMessage} className="bg-indigo-600 px-7 rounded-2xl active:scale-95 transition-all hover:bg-indigo-500 shadow-xl shadow-indigo-500/20">
+                      <button onClick={handleSendMessage} className="bg-indigo-600 px-6 md:px-10 rounded-2xl active:scale-95 transition-all hover:bg-indigo-500 shadow-xl shadow-indigo-500/20">
                         <Send className="w-6 h-6 text-white" />
                       </button>
                     </div>
