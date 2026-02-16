@@ -113,8 +113,8 @@ const App: React.FC = () => {
               Official Portal
             </div>
             <div className="space-y-2">
-              <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-gradient leading-tight">
-                EPLIM <span className="text-white/40">AI</span><br />Governance
+              <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-gradient leading-tight uppercase">
+                EPLIM AI<br />Governance
               </h1>
               <p className="text-white/50 text-xl max-w-2xl font-light leading-relaxed">
                 이플림의 혁신을 이끄는 AI원칙과 실무 지침을 한눈에 확인하세요.
@@ -232,7 +232,7 @@ const App: React.FC = () => {
               <div className="w-8 h-8 bg-white/5 rounded-lg flex items-center justify-center">
                 <Shield className="w-4 h-4 text-indigo-500" />
               </div>
-              <span className="font-black tracking-tighter text-xl">EPLIM <span className="text-indigo-400">Policy</span></span>
+              <span className="font-black tracking-tighter text-xl uppercase">EPLIM <span className="text-indigo-400">AI Governance</span></span>
             </div>
             <p className="text-white/20 text-xs max-w-sm">
               © 2025 EPLIM AI Governance Board. 이플림의 모든 AI 정책은 법률 및 윤리 기준을 엄격히 준수합니다.
