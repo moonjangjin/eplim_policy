@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { 
   Shield, 
   Settings, 
@@ -8,13 +8,13 @@ import {
   MessageSquare, 
   ChevronRight, 
   CheckCircle2, 
-  Info,
   ArrowDown,
   Sparkles,
-  Search,
   X,
   Send,
-  Loader2
+  Loader2,
+  ExternalLink,
+  ChevronDown
 } from 'lucide-react';
 import { Rule, Module, GovernanceData } from './types';
 import { askRuleAssistant } from './services/geminiService';
@@ -47,13 +47,18 @@ const App: React.FC = () => {
   const [chatInput, setChatInput] = useState('');
   const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
   const [isTyping, setIsTyping] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const contextString = useMemo(() => {
-    return JSON.stringify(GOVERNANCE_DATA, null, 2);
-  }, []);
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [chatHistory, isTyping]);
+
+  const contextString = useMemo(() => JSON.stringify(GOVERNANCE_DATA, null, 2), []);
 
   const handleExport = () => {
-    let output = '# AI 운영 헌법 및 규칙\n\n## 1. AI 헌법\n';
+    let output = '# EPLIM AI 운영 헌법 및 규칙\n\n## 1. AI 헌법\n';
     GOVERNANCE_DATA.constitution.forEach(r => output += `### ${r.title}\n${r.description}\n\n`);
     output += '## 2. 공통 운영 규칙\n';
     GOVERNANCE_DATA.commonRules.forEach(r => output += `### ${r.title}\n${r.description}\n\n`);
@@ -68,7 +73,7 @@ const App: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'AI_Governance_Rules.md';
+    a.download = 'EPLIM_AI_Governance.md';
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -85,158 +90,132 @@ const App: React.FC = () => {
       const response = await askRuleAssistant(userMessage, contextString);
       setChatHistory(prev => [...prev, { role: 'assistant', content: response }]);
     } catch (error) {
-      setChatHistory(prev => [...prev, { role: 'assistant', content: '오류가 발생했습니다. 다시 시도해주세요.' }]);
+      setChatHistory(prev => [...prev, { role: 'assistant', content: '죄송합니다. 현재 어시스턴트 연결에 문제가 발생했습니다. 나중에 다시 시도해주세요.' }]);
     } finally {
       setIsTyping(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
-      {/* Background Gradients */}
+    <div className="min-h-screen bg-[#0a0a0a] text-white selection:bg-indigo-500/30">
+      {/* Dynamic Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-900/10 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-900/10 blur-[120px] rounded-full" />
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-900/10 blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-900/10 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
       </div>
 
-      <div className="container mx-auto px-6 py-12 relative z-10 max-w-7xl">
-        {/* Header Section */}
-        <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 animate-in fade-in slide-in-from-top-4 duration-700">
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                <Shield className="w-7 h-7 text-white" />
-              </div>
-              <h1 className="text-4xl font-black tracking-tighter">AI Governance <span className="text-indigo-400">Portal</span></h1>
+      <div className="container mx-auto px-6 py-16 relative z-10 max-w-7xl">
+        {/* Header */}
+        <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-24 animate-in fade-in slide-in-from-top-8 duration-1000">
+          <div className="space-y-6">
+            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold tracking-widest uppercase">
+              <Sparkles className="w-3.5 h-3.5" />
+              Official Portal
             </div>
-            <p className="text-white/50 text-lg max-w-xl leading-relaxed">
-              조직의 AI 활용 원칙을 체계적으로 관리하고 준수 여부를 확인하는 통합 거버넌스 플랫폼입니다.
-            </p>
+            <div className="space-y-2">
+              <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-gradient leading-tight">
+                EPLIM <span className="text-white/40">AI</span><br />Governance
+              </h1>
+              <p className="text-white/50 text-xl max-w-2xl font-light leading-relaxed">
+                에플림의 혁신을 이끄는 AI 원칙과 실무 가이드라인을 투명하게 공개하고 관리합니다.
+              </p>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-4">
             <button 
               onClick={handleExport}
-              className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-semibold flex items-center gap-2 transition-all active:scale-95"
+              className="group px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl font-bold flex items-center gap-3 transition-all active:scale-95"
             >
-              <Download className="w-4 h-4" />
-              Export MD
+              <Download className="w-5 h-5 group-hover:translate-y-0.5 transition-transform" />
+              Download Rules
             </button>
             <button 
               onClick={() => setIsAssistantOpen(true)}
-              className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-bold flex items-center gap-2 shadow-xl shadow-indigo-500/20 transition-all active:scale-95"
+              className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-2xl font-black flex items-center gap-3 shadow-2xl shadow-indigo-500/40 transition-all active:scale-95 hover:shadow-indigo-500/60"
             >
-              <Sparkles className="w-4 h-4" />
-              Ask AI Assistant
+              <MessageSquare className="w-5 h-5" />
+              AI Assistant
             </button>
           </div>
         </header>
 
-        {/* Hierarchy Visualization */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-20">
-          <div className="md:col-span-1 glass-panel p-6 rounded-2xl flex flex-col items-center justify-center gap-3 text-center border-indigo-500/30">
-            <div className="p-3 bg-indigo-500/10 rounded-full">
-              <Shield className="w-6 h-6 text-indigo-400" />
+        {/* Hierarchy Flow */}
+        <div className="relative mb-32">
+          <div className="absolute inset-0 bg-indigo-500/5 blur-3xl rounded-full" />
+          <div className="relative grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
+            <div className="glass-panel p-8 rounded-3xl text-center border-indigo-500/30">
+              <Shield className="w-8 h-8 text-indigo-400 mx-auto mb-4" />
+              <h3 className="font-bold text-lg">AI 헌법</h3>
+              <p className="text-[10px] text-indigo-400/60 uppercase font-black tracking-tighter mt-1">Core Integrity</p>
             </div>
-            <div>
-              <h4 className="font-bold text-sm">AI 헌법</h4>
-              <p className="text-[10px] text-white/40 uppercase tracking-widest mt-1">Core Integrity</p>
+            <div className="flex justify-center opacity-20"><ChevronRight className="w-8 h-8 hidden md:block" /><ChevronDown className="w-8 h-8 md:hidden" /></div>
+            <div className="glass-panel p-8 rounded-3xl text-center">
+              <Settings className="w-8 h-8 text-white/40 mx-auto mb-4" />
+              <h3 className="font-bold text-lg">운영 규칙</h3>
+              <p className="text-[10px] text-white/30 uppercase font-black tracking-tighter mt-1">Protocols</p>
             </div>
-          </div>
-          <div className="flex items-center justify-center text-white/20">
-            <ChevronRight className="w-8 h-8 hidden md:block" />
-            <ArrowDown className="w-8 h-8 md:hidden" />
-          </div>
-          <div className="md:col-span-1 glass-panel p-6 rounded-2xl flex flex-col items-center justify-center gap-3 text-center border-white/10">
-            <div className="p-3 bg-white/5 rounded-full">
-              <Settings className="w-6 h-6 text-white/60" />
-            </div>
-            <div>
-              <h4 className="font-bold text-sm">운영 규칙</h4>
-              <p className="text-[10px] text-white/40 uppercase tracking-widest mt-1">Common Protocols</p>
-            </div>
-          </div>
-          <div className="flex items-center justify-center text-white/20">
-            <ChevronRight className="w-8 h-8 hidden md:block" />
-            <ArrowDown className="w-8 h-8 md:hidden" />
-          </div>
-          <div className="md:col-span-1 glass-panel p-6 rounded-2xl flex flex-col items-center justify-center gap-3 text-center border-white/10">
-            <div className="p-3 bg-white/5 rounded-full">
-              <Box className="w-6 h-6 text-white/60" />
-            </div>
-            <div>
-              <h4 className="font-bold text-sm">모듈 가이드</h4>
-              <p className="text-[10px] text-white/40 uppercase tracking-widest mt-1">Domain Specific</p>
+            <div className="flex justify-center opacity-20"><ChevronRight className="w-8 h-8 hidden md:block" /><ChevronDown className="w-8 h-8 md:hidden" /></div>
+            <div className="glass-panel p-8 rounded-3xl text-center">
+              <Box className="w-8 h-8 text-white/40 mx-auto mb-4" />
+              <h3 className="font-bold text-lg">모듈 가이드</h3>
+              <p className="text-[10px] text-white/30 uppercase font-black tracking-tighter mt-1">Execution</p>
             </div>
           </div>
         </div>
 
-        {/* Sections Content */}
-        <div className="space-y-24">
-          {/* Constitution Section */}
-          <section className="animate-in fade-in slide-in-from-bottom-8 duration-700">
-            <div className="flex items-center gap-4 mb-10 border-b border-white/10 pb-6">
-              <h2 className="text-3xl font-black tracking-tight">AI 헌법</h2>
-              <span className="px-3 py-1 bg-indigo-500/20 text-indigo-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-indigo-500/30">
-                Immutable
-              </span>
+        {/* Main Content Sections */}
+        <div className="space-y-40">
+          {/* Constitution */}
+          <section id="constitution" className="animate-in fade-in slide-in-from-bottom-12 duration-1000">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 border-b border-white/5 pb-8">
+              <div className="space-y-2">
+                <h2 className="text-4xl font-black tracking-tight">AI 헌법</h2>
+                <p className="text-white/40 text-lg">에플림의 모든 AI 시스템이 준수해야 하는 5대 원칙입니다.</p>
+              </div>
+              <div className="px-4 py-1.5 bg-indigo-500/10 text-indigo-400 text-[10px] font-black uppercase tracking-widest border border-indigo-500/20 rounded-full">
+                Fixed Policy
+              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {GOVERNANCE_DATA.constitution.map((rule) => (
-                <div key={rule.id} className="glass-panel p-8 rounded-2xl border-white/5 hover:border-indigo-500/20 transition-all group">
-                  <div className="mb-4 inline-flex items-center gap-2 text-indigo-400 font-bold text-sm">
-                    <CheckCircle2 className="w-4 h-4" />
-                    Principle
+                <div key={rule.id} className="glass-panel p-10 rounded-3xl group relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-10 transition-opacity">
+                    <Shield className="w-16 h-16" />
                   </div>
-                  <h3 className="text-xl font-bold mb-4 group-hover:text-indigo-300 transition-colors">{rule.title}</h3>
-                  <p className="text-white/50 text-sm leading-relaxed">{rule.description}</p>
+                  <CheckCircle2 className="w-6 h-6 text-indigo-500 mb-6" />
+                  <h3 className="text-2xl font-bold mb-4 group-hover:text-indigo-300 transition-colors">{rule.title}</h3>
+                  <p className="text-white/50 leading-relaxed text-sm lg:text-base">{rule.description}</p>
                 </div>
               ))}
             </div>
           </section>
 
-          {/* Common Rules Section */}
-          <section className="animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: '200ms' }}>
-             <div className="flex items-center gap-4 mb-10 border-b border-white/10 pb-6">
-              <h2 className="text-3xl font-black tracking-tight">공통 운영 규칙</h2>
-              <span className="px-3 py-1 bg-white/5 text-white/40 text-[10px] font-black uppercase tracking-widest rounded-full border border-white/10">
-                Execution
-              </span>
-            </div>
-            <div className="space-y-4">
-              {GOVERNANCE_DATA.commonRules.map((rule) => (
-                <div key={rule.id} className="glass-panel p-6 rounded-xl flex items-start gap-6 hover:bg-white/[0.05] transition-colors border-white/5">
-                  <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center shrink-0 border border-white/10">
-                    <span className="text-lg font-bold text-white/40">{rule.id.replace('r', '')}</span>
-                  </div>
-                  <div className="py-1">
-                    <h3 className="text-lg font-bold mb-1">{rule.title}</h3>
-                    <p className="text-white/50 text-sm">{rule.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Modular Rules Grid */}
-          <section className="animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: '400ms' }}>
-             <div className="flex items-center gap-4 mb-10 border-b border-white/10 pb-6">
-              <h2 className="text-3xl font-black tracking-tight">모듈별 세부 규칙</h2>
-              <span className="px-3 py-1 bg-white/5 text-white/40 text-[10px] font-black uppercase tracking-widest rounded-full border border-white/10">
-                Specialized
-              </span>
+          {/* Modular Rules */}
+          <section id="modules" className="animate-in fade-in slide-in-from-bottom-12 duration-1000" style={{ animationDelay: '200ms' }}>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 border-b border-white/5 pb-8">
+              <div className="space-y-2">
+                <h2 className="text-4xl font-black tracking-tight">영역별 가이드라인</h2>
+                <p className="text-white/40 text-lg">각 비즈니스 모듈에 최적화된 AI 활용 수칙입니다.</p>
+              </div>
+              <button className="flex items-center gap-2 text-white/40 hover:text-white transition-colors text-sm font-medium">
+                View All Modules <ExternalLink className="w-4 h-4" />
+              </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {GOVERNANCE_DATA.modules.map((module) => (
-                <div key={module.id} className="glass-panel p-8 rounded-2xl border-white/5 hover:border-white/10 transition-all flex flex-col h-full">
-                  <div className="flex items-center justify-between mb-8">
-                    <h3 className="text-xl font-bold tracking-tight">{module.name}</h3>
-                    <Box className="w-5 h-5 text-indigo-400/50" />
+                <div key={module.id} className="glass-panel p-10 rounded-3xl flex flex-col hover:border-white/20">
+                  <div className="flex items-center justify-between mb-10">
+                    <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10">
+                      <Box className="w-6 h-6 text-indigo-400" />
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-tighter text-white/20">{module.id}</span>
                   </div>
-                  <ul className="space-y-4 flex-1">
+                  <h3 className="text-2xl font-bold mb-8 tracking-tight">{module.name}</h3>
+                  <ul className="space-y-5 flex-1">
                     {module.rules.map((r, idx) => (
-                      <li key={idx} className="flex items-start gap-3 text-sm text-white/60">
-                        <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-lg shadow-indigo-500/50 shrink-0" />
-                        {r}
+                      <li key={idx} className="flex items-start gap-4 text-sm text-white/60 group">
+                        <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-500/40 group-hover:bg-indigo-500 transition-colors shrink-0" />
+                        <span className="group-hover:text-white/90 transition-colors">{r}</span>
                       </li>
                     ))}
                   </ul>
@@ -247,95 +226,122 @@ const App: React.FC = () => {
         </div>
 
         {/* Footer */}
-        <footer className="mt-32 pb-12 border-t border-white/5 pt-12 text-center">
-          <div className="flex items-center justify-center gap-3 mb-6 opacity-30">
-             <Shield className="w-5 h-5" />
-             <div className="h-4 w-px bg-white" />
-             <span className="text-xs font-bold uppercase tracking-widest">Lumina Governance</span>
+        <footer className="mt-64 pt-16 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
+          <div className="space-y-4">
+            <div className="flex items-center justify-center md:justify-start gap-3">
+              <div className="w-8 h-8 bg-white/5 rounded-lg flex items-center justify-center">
+                <Shield className="w-4 h-4 text-indigo-500" />
+              </div>
+              <span className="font-black tracking-tighter text-xl">EPLIM <span className="text-indigo-400">Policy</span></span>
+            </div>
+            <p className="text-white/20 text-xs max-w-sm">
+              © 2025 EPLIM AI Governance Board. 에플림의 모든 AI 정책은 법률 및 윤리 기준을 엄격히 준수합니다.
+            </p>
           </div>
-          <p className="text-white/20 text-xs">
-            © 2025 AI Constitutional Compliance Board. All rights reserved.
-          </p>
+          <div className="flex gap-8 text-xs font-bold uppercase tracking-widest text-white/20">
+            <a href="#" className="hover:text-white transition-colors">Privacy</a>
+            <a href="#" className="hover:text-white transition-colors">Terms</a>
+            <a href="#" className="hover:text-white transition-colors">Compliance</a>
+          </div>
         </footer>
       </div>
 
-      {/* AI Assistant Modal/Sidebar */}
+      {/* AI Assistant Overlay */}
       {isAssistantOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 md:p-12 animate-in fade-in duration-300">
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsAssistantOpen(false)} />
-          <div className="w-full max-w-2xl bg-[#111] border border-white/10 rounded-3xl shadow-2xl flex flex-col h-[80vh] overflow-hidden relative z-10 animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 lg:p-12 animate-in fade-in duration-300">
+          <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={() => setIsAssistantOpen(false)} />
+          <div className="w-full max-w-3xl bg-[#0f0f0f] border border-white/10 rounded-[2.5rem] shadow-2xl flex flex-col h-[85vh] overflow-hidden relative z-10 animate-in zoom-in-95 duration-300">
             {/* Assistant Header */}
-            <div className="p-6 border-b border-white/10 flex items-center justify-between bg-white/5">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-5 h-5" />
+            <div className="px-8 py-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-indigo-500/40">
+                  <Sparkles className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold">Governance Assistant</h3>
-                  <p className="text-[10px] text-white/40 uppercase tracking-widest">Powered by Gemini 3</p>
+                  <h3 className="font-bold text-lg">EPLIM Assistant</h3>
+                  <div className="flex items-center gap-1.5 text-[10px] text-green-500 font-black uppercase tracking-widest">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                    AI System Online
+                  </div>
                 </div>
               </div>
               <button 
                 onClick={() => setIsAssistantOpen(false)}
-                className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                className="p-3 hover:bg-white/5 rounded-2xl transition-all"
               >
                 <X className="w-6 h-6" />
               </button>
             </div>
 
-            {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            {/* Chat History */}
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-8 space-y-8 scroll-smooth">
               {chatHistory.length === 0 && (
-                <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-50">
-                  <div className="p-4 bg-white/5 rounded-full">
-                    <MessageSquare className="w-8 h-8" />
+                <div className="h-full flex flex-col items-center justify-center text-center space-y-6 opacity-30">
+                  <div className="p-6 bg-white/5 rounded-full">
+                    <MessageSquare className="w-12 h-12" />
                   </div>
-                  <p className="text-sm max-w-xs">
-                    거버넌스 규칙에 대해 궁금한 점을 물어보세요.<br/>
-                    예: "개인정보 보호 규칙이 어떻게 되나요?"
-                  </p>
+                  <div className="space-y-2">
+                    <p className="text-lg font-bold">무엇을 도와드릴까요?</p>
+                    <p className="text-sm max-w-xs mx-auto font-light">
+                      에플림의 AI 거버넌스 규칙, 프롬프트 작성 지침 등에 대해 물어보세요.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap justify-center gap-2 pt-4">
+                    {['데이터 분석 규칙 알려줘', '인간 중심 원칙이란?', '콘텐츠 생성 시 주의사항'].map(q => (
+                      <button 
+                        key={q}
+                        onClick={() => { setChatInput(q); }}
+                        className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-full text-xs font-medium border border-white/10 transition-colors"
+                      >
+                        {q}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
               {chatHistory.map((msg, i) => (
                 <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] p-4 rounded-2xl ${
+                  <div className={`max-w-[85%] px-6 py-4 rounded-3xl ${
                     msg.role === 'user' 
-                      ? 'bg-indigo-600 text-white rounded-tr-none shadow-lg shadow-indigo-500/20' 
-                      : 'bg-white/5 border border-white/10 text-white/80 rounded-tl-none'
+                      ? 'bg-indigo-600 text-white rounded-tr-none shadow-xl shadow-indigo-500/20' 
+                      : 'bg-white/5 border border-white/10 text-white/90 rounded-tl-none font-light leading-relaxed'
                   }`}>
-                    <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                    {msg.content}
                   </div>
                 </div>
               ))}
               {isTyping && (
                 <div className="flex justify-start">
-                  <div className="bg-white/5 border border-white/10 p-4 rounded-2xl rounded-tl-none flex items-center gap-3">
-                    <Loader2 className="w-4 h-4 animate-spin text-indigo-400" />
-                    <span className="text-xs text-white/40">규칙 검토 중...</span>
+                  <div className="bg-white/5 border border-white/10 px-6 py-4 rounded-3xl rounded-tl-none flex items-center gap-4">
+                    <Loader2 className="w-5 h-5 animate-spin text-indigo-500" />
+                    <span className="text-xs text-white/30 font-bold uppercase tracking-widest">규칙 문서를 확인 중입니다...</span>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Chat Input */}
-            <div className="p-6 bg-black/40 border-t border-white/10">
-              <div className="relative group">
+            {/* Input Area */}
+            <div className="p-8 bg-white/[0.01] border-t border-white/5">
+              <div className="relative">
                 <input 
                   type="text"
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                  placeholder="Ask about AI rules..."
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 pr-16 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all focus:bg-white/10"
+                  placeholder="AI 정책에 대해 질문하세요..."
+                  className="w-full bg-white/5 border border-white/10 rounded-3xl px-8 py-5 pr-16 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:bg-white/10 transition-all text-sm lg:text-base placeholder:text-white/20"
                 />
                 <button 
                   onClick={handleSendMessage}
                   disabled={!chatInput.trim() || isTyping}
-                  className="absolute right-3 top-3 bottom-3 aspect-square bg-indigo-600 rounded-xl flex items-center justify-center hover:bg-indigo-700 disabled:bg-white/10 disabled:cursor-not-allowed transition-all active:scale-90"
+                  className="absolute right-3 top-3 bottom-3 aspect-square bg-indigo-600 rounded-2xl flex items-center justify-center hover:bg-indigo-700 disabled:bg-white/5 disabled:text-white/20 transition-all active:scale-90 shadow-lg shadow-indigo-500/20"
                 >
                   <Send className="w-5 h-5" />
                 </button>
               </div>
+              <p className="mt-4 text-[10px] text-center text-white/20 font-medium uppercase tracking-tighter">
+                Answers are based on the official EPLIM AI Policy document.
+              </p>
             </div>
           </div>
         </div>

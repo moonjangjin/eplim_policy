@@ -1,54 +1,80 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lumina Slides AI</title>
+    <title>EPLIM AI Governance Portal</title>
+    
+    <!-- SEO 및 소셜 공유용 메타 태그 -->
+    <meta name="description" content="EPLIM의 AI 운영 헌법 및 모듈별 세부 규칙 관리 포털">
+    <meta property="og:title" content="EPLIM AI Governance Portal">
+    <meta property="og:description" content="AI 원칙과 실무 지침을 한눈에 확인하세요.">
+    <meta property="og:type" content="website">
+    
+    <!-- 스타일 및 폰트 로드 -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
     <style>
+        :root {
+            --indigo-glow: rgba(99, 102, 241, 0.15);
+        }
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
             background-color: #0a0a0a;
             color: #ffffff;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
         .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .slide-transition {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        .glass-panel:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 8px 32px -8px var(--indigo-glow);
         }
-        ::-webkit-scrollbar {
-            width: 6px;
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
+        /* 스크롤바 디자인 */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.2);
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+        
+        @keyframes subtle-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .float-animation {
+            animation: subtle-float 6s ease-in-out infinite;
         }
     </style>
 <script type="importmap">
 {
   "imports": {
+    "react": "https://esm.sh/react@^19.2.4",
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
     "react/": "https://esm.sh/react@^19.2.4/",
-    "react": "https://esm.sh/react@^19.2.4",
-    "lucide-react": "https://esm.sh/lucide-react@^0.564.0",
-    "@google/genai": "https://esm.sh/@google/genai@^1.41.0"
+    "@google/genai": "https://esm.sh/@google/genai@^1.41.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.564.0"
   }
 }
 </script>
 </head>
 <body>
     <div id="root"></div>
+    <!-- index.tsx는 빌드 도구에 의해 자동 임포트됨 -->
 </body>
 </html>
