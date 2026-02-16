@@ -173,7 +173,7 @@ const App: React.FC = () => {
                 <p className="text-white/40 text-lg">이플림의 모든 AI 시스템이 준수해야 하는 5대 원칙입니다.</p>
               </div>
               <div className="px-4 py-1.5 bg-indigo-500/10 text-indigo-400 text-[10px] font-black uppercase tracking-widest border border-indigo-500/20 rounded-full">
-                Fixed Policy
+                FIXED POLICY
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
