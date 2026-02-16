@@ -8,7 +8,7 @@ export const askRuleAssistant = async (question: string, context: string) => {
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
     contents: `
-      You are an AI Governance Expert for EPLIM. Below is the organization's AI Constitution and Operating Rules.
+      You are an AI Governance Expert for EPLIM. Below is the organization's AI Regulation and Operating Rules.
       
       RULES CONTEXT:
       ${context}

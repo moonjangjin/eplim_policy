@@ -58,7 +58,7 @@ const App: React.FC = () => {
   const contextString = useMemo(() => JSON.stringify(GOVERNANCE_DATA, null, 2), []);
 
   const handleExport = () => {
-    let output = '# EPLIM AI 운영 헌법 및 규칙\n\n## 1. AI 헌법\n';
+    let output = '# EPLIM AI 운영 규정 및 규칙\n\n## 1. 규정\n';
     GOVERNANCE_DATA.constitution.forEach(r => output += `### ${r.title}\n${r.description}\n\n`);
     output += '## 2. 공통 운영 규칙\n';
     GOVERNANCE_DATA.commonRules.forEach(r => output += `### ${r.title}\n${r.description}\n\n`);
@@ -117,7 +117,7 @@ const App: React.FC = () => {
                 EPLIM <span className="text-white/40">AI</span><br />Governance
               </h1>
               <p className="text-white/50 text-xl max-w-2xl font-light leading-relaxed">
-                에플림의 혁신을 이끄는 AI 원칙과 실무 가이드라인을 투명하게 공개하고 관리합니다.
+                이플림의 혁신을 이끄는 AI원칙과 실무 지침을 한눈에 확인하세요.
               </p>
             </div>
           </div>
@@ -145,7 +145,7 @@ const App: React.FC = () => {
           <div className="relative grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
             <div className="glass-panel p-8 rounded-3xl text-center border-indigo-500/30">
               <Shield className="w-8 h-8 text-indigo-400 mx-auto mb-4" />
-              <h3 className="font-bold text-lg">AI 헌법</h3>
+              <h3 className="font-bold text-lg">규정</h3>
               <p className="text-[10px] text-indigo-400/60 uppercase font-black tracking-tighter mt-1">Core Integrity</p>
             </div>
             <div className="flex justify-center opacity-20"><ChevronRight className="w-8 h-8 hidden md:block" /><ChevronDown className="w-8 h-8 md:hidden" /></div>
@@ -169,8 +169,8 @@ const App: React.FC = () => {
           <section id="constitution" className="animate-in fade-in slide-in-from-bottom-12 duration-1000">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 border-b border-white/5 pb-8">
               <div className="space-y-2">
-                <h2 className="text-4xl font-black tracking-tight">AI 헌법</h2>
-                <p className="text-white/40 text-lg">에플림의 모든 AI 시스템이 준수해야 하는 5대 원칙입니다.</p>
+                <h2 className="text-4xl font-black tracking-tight">규정</h2>
+                <p className="text-white/40 text-lg">이플림의 모든 AI 시스템이 준수해야 하는 5대 원칙입니다.</p>
               </div>
               <div className="px-4 py-1.5 bg-indigo-500/10 text-indigo-400 text-[10px] font-black uppercase tracking-widest border border-indigo-500/20 rounded-full">
                 Fixed Policy
@@ -235,7 +235,7 @@ const App: React.FC = () => {
               <span className="font-black tracking-tighter text-xl">EPLIM <span className="text-indigo-400">Policy</span></span>
             </div>
             <p className="text-white/20 text-xs max-w-sm">
-              © 2025 EPLIM AI Governance Board. 에플림의 모든 AI 정책은 법률 및 윤리 기준을 엄격히 준수합니다.
+              © 2025 EPLIM AI Governance Board. 이플림의 모든 AI 정책은 법률 및 윤리 기준을 엄격히 준수합니다.
             </p>
           </div>
           <div className="flex gap-8 text-xs font-bold uppercase tracking-widest text-white/20">
@@ -283,7 +283,7 @@ const App: React.FC = () => {
                   <div className="space-y-2">
                     <p className="text-lg font-bold">무엇을 도와드릴까요?</p>
                     <p className="text-sm max-w-xs mx-auto font-light">
-                      에플림의 AI 거버넌스 규칙, 프롬프트 작성 지침 등에 대해 물어보세요.
+                      이플림의 AI 거버넌스 규정, 프롬프트 작성 지침 등에 대해 물어보세요.
                     </p>
                   </div>
                   <div className="flex flex-wrap justify-center gap-2 pt-4">
@@ -314,7 +314,7 @@ const App: React.FC = () => {
                 <div className="flex justify-start">
                   <div className="bg-white/5 border border-white/10 px-6 py-4 rounded-3xl rounded-tl-none flex items-center gap-4">
                     <Loader2 className="w-5 h-5 animate-spin text-indigo-500" />
-                    <span className="text-xs text-white/30 font-bold uppercase tracking-widest">규칙 문서를 확인 중입니다...</span>
+                    <span className="text-xs text-white/30 font-bold uppercase tracking-widest">규정 문서를 확인 중입니다...</span>
                   </div>
                 </div>
               )}
