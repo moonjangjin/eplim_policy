@@ -1,6 +1,6 @@
 {
   "name": "EPLIM AI Governance Portal",
-  "description": "EPLIM의 AI 활용 원칙과 거버넌스를 체계적으로 관리하고 AI 어시스턴트를 통해 실시간 가이드를 제공하는 공식 포털입니다.",
+  "description": "에플림의 AI 거버넌스 및 운영 정책을 관리하는 모바일 최적화 포털입니다.",
   "requestFramePermissions": [],
   "homepage": "https://moonjangjin.github.io/eplim_policy"
 }
