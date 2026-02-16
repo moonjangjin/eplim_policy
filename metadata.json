@@ -1,0 +1,7 @@
+{
+  "name": "Lumina AI Governance",
+  "description": "A professional portal for managing AI Constitutions, operating rules, and modular execution guidelines with AI-powered assistance.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
