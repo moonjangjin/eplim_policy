@@ -163,7 +163,7 @@
         import { 
           Shield, Box, MessageSquare, ChevronRight, CheckCircle2, 
           Sparkles, X, Send, ChevronDown, Search, HelpCircle, 
-          GraduationCap, Phone, Menu, ArrowLeft, AlertTriangle, CheckCircle, Info, Mail, User
+          GraduationCap, Phone, Menu, ArrowLeft, AlertTriangle, CheckCircle, Info, Mail, User, Layers
         } from 'lucide-react';
         import { GoogleGenAI } from "@google/genai";
 
@@ -199,6 +199,92 @@
         };
 
         const MODULE_DETAILS = {
+          'm1': {
+            overview: '블로그, 소셜미디어, 마케팅 자료 등 모든 콘텐츠 제작 시 AGI를 활용할 때 준수해야 할 세부 지침입니다.',
+            compliance: [
+              { 
+                title: '브랜드 톤앤매너 유지', 
+                content: 'AGI 프롬프트에 이플림의 공식 브랜드 가이드(친근하고 전문적인 톤, 존댓말 사용, 긍정적 표현)를 명시적으로 포함해야 합니다. 생성된 콘텐츠가 브랜드 아이덴티티와 일치하는지 마케팅팀의 최종 검토가 필요합니다.' 
+              },
+              { 
+                title: '표절 검사 필수', 
+                content: 'AGI가 생성한 모든 텍스트는 Copyscape, Turnitin 등 공식 승인된 표절 검사 도구를 통해 검증해야 합니다. 유사도 15% 이상 시 재작성이 필요하며, 검사 결과는 콘텐츠 관리 시스템에 기록해야 합니다.' 
+              },
+              { 
+                title: '출처 교차 검증', 
+                content: '사실 기반 콘텐츠(통계, 연구 결과, 시장 데이터 등)는 반드시 2개 이상의 신뢰할 수 있는 출처에서 교차 검증해야 합니다. 출처는 공식 기관, 학술지, 주요 언론사 등이어야 하며, 출처 링크를 콘텐츠 하단에 명시합니다.' 
+              },
+              { 
+                title: 'AGI 생성 표기 의무', 
+                content: '모든 AGI 생성 콘텐츠는 "본 콘텐츠는 AGI 도구를 활용하여 작성되었으며, 전문가의 검토를 거쳤습니다" 문구를 명시해야 합니다. 표기 위치는 콘텐츠 하단 또는 메타데이터에 포함합니다.' 
+              }
+            ],
+            prohibitions: [
+              '타사 콘텐츠의 무단 복제 및 패러프레이징',
+              '검증되지 않은 통계나 사실을 포함한 콘텐츠 게시',
+              'AGI 사용 사실을 숨기고 100% 인간 작성인 것처럼 속이는 행위',
+              '저작권이 있는 이미지, 인용문을 무단으로 포함',
+              '경쟁사 비방 또는 부정적 비교 콘텐츠',
+              '민감한 사회·정치적 주제를 검토 없이 다루는 행위'
+            ],
+            cases: [
+              {
+                title: '블로그 포스트 작성',
+                good: '1) AGI로 초안 작성 (브랜드 톤 프롬프트 포함) → 2) 콘텐츠 팀 검토 및 사실 확인 → 3) 표절 검사 실시 → 4) AGI 표기 추가 → 5) 최종 승인 후 게시',
+                bad: 'AGI가 생성한 글을 검토 없이 즉시 블로그에 게시하고, AGI 사용 사실을 표기하지 않음'
+              },
+              {
+                title: '소셜미디어 캠페인 문구',
+                good: 'AGI로 10개 문구 생성 → 마케팅팀이 브랜드 톤에 맞는 3개 선별 → 법무팀 과장광고 검토 → 승인 후 게시',
+                bad: 'AGI가 생성한 문구를 검토 없이 자동 예약 게시 설정'
+              },
+              {
+                title: '시장 분석 리포트',
+                good: 'AGI로 데이터 요약 → 최소 3개 공신력 있는 출처와 교차 검증 → 출처 링크 명시 → 전문가 검토 → AGI 활용 표기 후 배포',
+                bad: 'AGI가 요약한 통계를 출처 확인 없이 리포트에 포함'
+              }
+            ],
+            checklist: [
+              '브랜드 가이드라인 프롬프트 포함 확인',
+              '표절 검사 도구 실행 완료 (유사도 15% 미만)',
+              '사실 기반 내용 2개 이상 출처 검증',
+              'AGI 생성 표기 문구 삽입',
+              '마케팅/콘텐츠 팀 최종 승인',
+              '법적 리스크 검토 완료'
+            ],
+            relatedPolicies: [
+              { id: 'c1', title: 'AGI 규정 1조 (인간 중심 원칙)' },
+              { id: 'c2', title: 'AGI 규정 2조 (투명성 명확성)' },
+              { id: 'c5', title: 'AGI 규정 5조 (법적 준수)' },
+              { id: 'r2', title: '공통 규칙 2 (결과물 검증 프로세스)' }
+            ],
+            contact: {
+              team: '콘텐츠 마케팅팀',
+              person: '김에디터',
+              email: 'content@eplim.com'
+            },
+            tools: {
+              title: '승인된 AGI 도구',
+              list: [
+                { name: 'ChatGPT Enterprise', usage: '장문 콘텐츠 초안 작성', status: 'approved' },
+                { name: 'Claude Pro', usage: '기술 문서, 가이드 작성', status: 'approved' },
+                { name: 'Jasper AGI', usage: '마케팅 카피 생성', status: 'conditional' },
+                { name: 'Copy.agi 무료 버전', usage: '사용 금지', status: 'prohibited' }
+              ]
+            },
+            workflow: {
+              title: '콘텐츠 제작 워크플로우',
+              steps: [
+                { step: 1, title: 'AGI 초안 생성', description: '브랜드 톤 프롬프트 포함하여 초안 작성', responsible: 'Content Writer' },
+                { step: 2, title: '사실 확인', description: '데이터, 통계, 인용 등 2개 이상 출처 검증', responsible: 'Content Writer' },
+                { step: 3, title: '표절 검사', description: 'Copyscape 등 승인 도구로 검증', responsible: 'Content Writer' },
+                { step: 4, title: '브랜드 검토', description: '톤앤매너 일치 여부 확인', responsible: 'Marketing Manager' },
+                { step: 5, title: '법무 검토', description: '저작권, 허위광고 리스크 점검', responsible: 'Legal Team' },
+                { step: 6, title: 'AGI 표기 추가', description: 'AGI 활용 문구 삽입', responsible: 'Content Writer' },
+                { step: 7, title: '최종 승인 및 게시', description: '모든 체크리스트 완료 후 게시', responsible: 'Content Lead' }
+              ]
+            }
+          },
           'm2': {
             overview: "상품 판매 및 고객 경험 향상을 위한 AGI 활용 지침입니다. 정확한 정보 제공과 소비자 신뢰 보호를 최우선으로 하며, 이커머스 환경에서의 윤리적 AGI 사용을 지향합니다.",
             compliance: [
@@ -350,6 +436,62 @@
                 </div>
               </section>
 
+              {/* Tools Section (If exists) */}
+              {detail.tools && (
+                <section className="space-y-8">
+                  <h2 className="text-2xl lg:text-3xl font-black flex items-center gap-3">
+                    <Sparkles className="text-yellow-400" /> {detail.tools.title}
+                  </h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {detail.tools.list.map((tool, idx) => {
+                      const borderColor = tool.status === 'approved' ? 'border-green-500/30' : 
+                                        tool.status === 'conditional' ? 'border-yellow-500/30' : 'border-red-500/30';
+                      const badgeColor = tool.status === 'approved' ? 'bg-green-500/10 text-green-400' : 
+                                       tool.status === 'conditional' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-red-500/10 text-red-400';
+                      return (
+                        <div key={idx} className={`glass-panel p-6 rounded-3xl border-2 ${borderColor} hover:bg-white/5 transition-all group cursor-default`}>
+                          <div className="flex justify-between items-start mb-4">
+                            <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-md ${badgeColor}`}>
+                              {tool.status}
+                            </span>
+                          </div>
+                          <h3 className="text-lg lg:text-xl font-black mb-2 group-hover:text-white transition-colors">{tool.name}</h3>
+                          <p className="text-xs lg:text-sm text-white/50 font-medium">{tool.usage}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </section>
+              )}
+
+              {/* Workflow Section (If exists) */}
+              {detail.workflow && (
+                <section className="space-y-12">
+                  <h2 className="text-2xl lg:text-3xl font-black flex items-center gap-3">
+                    <Layers className="text-indigo-400" /> {detail.workflow.title}
+                  </h2>
+                  <div className="relative space-y-6 lg:space-y-8 pl-4 lg:pl-10">
+                    <div className="absolute left-10 lg:left-16 top-10 bottom-10 w-px border-l border-dashed border-indigo-500/30 hidden md:block" />
+                    {detail.workflow.steps.map((step, idx) => (
+                      <div key={idx} className="relative flex flex-col md:flex-row items-start gap-6 lg:gap-10 glass-panel p-6 lg:p-8 rounded-3xl hover:bg-white/5 transition-all">
+                        <div className="z-10 w-12 h-12 rounded-full bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400 font-black text-xl shrink-0">
+                          {step.step}
+                        </div>
+                        <div className="flex-1 space-y-2">
+                          <div className="flex items-center justify-between gap-4">
+                            <h3 className="text-xl lg:text-2xl font-black tracking-tight">{step.title}</h3>
+                            <span className="px-3 py-1 bg-white/10 rounded-full text-[10px] lg:text-xs font-black text-white/40 uppercase tracking-widest shrink-0">
+                              {step.responsible}
+                            </span>
+                          </div>
+                          <p className="body-text-mobile text-white/60 font-medium lg:text-lg">{step.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
               {/* Related Policies & Contact */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 pb-20">
                 <div className="space-y-6">
@@ -486,7 +628,7 @@
                   <div className="flex items-center gap-2 cursor-pointer" onClick={() => { setCurrentView('main'); window.scrollTo({top: 0, behavior: 'smooth'}); }}>
                     <Shield className="w-5 h-5 text-indigo-500" />
                     <span className="font-black text-lg lg:text-2xl tracking-tighter uppercase whitespace-nowrap">
-                      EPLIM <span className="text-indigo-400 hidden sm:inline"> Framework</span>
+                      EPLIM <span className="text-indigo-400 hidden sm:inline"> AGI Framework</span>
                     </span>
                   </div>
 
@@ -708,7 +850,7 @@
                 <div className="flex flex-col items-center gap-8">
                   <div className="flex items-center gap-3 opacity-60 cursor-pointer" onClick={() => { setCurrentView('main'); window.scrollTo({top: 0, behavior: 'smooth'}); }}>
                     <Shield size={24} className="text-indigo-500" />
-                    <span className="font-black text-xl lg:text-3xl tracking-tighter uppercase text-white/80">EPLIM <span className="text-indigo-400">Framework</span></span>
+                    <span className="font-black text-xl lg:text-3xl tracking-tighter uppercase text-white/80">EPLIM <span className="text-indigo-400">AGI GOVERNANCE</span></span>
                   </div>
                   <p className="text-[10px] lg:text-xs font-bold opacity-30 tracking-[0.4em] leading-relaxed uppercase">
                     © 2025 EPLIM AGI Governance Board.<br />Confidential - For Internal Use Only
