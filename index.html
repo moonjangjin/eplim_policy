@@ -36,7 +36,7 @@
             transition: all 0.3s ease;
         }
         
-        /* Typography & Layout Strategy */
+        /* Typography System */
         .section-title {
             font-weight: 900;
             letter-spacing: -0.05em;
@@ -46,16 +46,16 @@
         /* Mobile Optimization (Max-width 768px) */
         @media (max-width: 768px) {
             .hero-title {
-                font-size: 2.75rem; /* 모바일 전용 크기 */
+                font-size: 2.75rem;
                 line-height: 1.1;
                 font-weight: 900;
             }
             .section-title {
-                font-size: 1.85rem; /* 모바일 제목 통일 */
+                font-size: 1.85rem;
                 margin-bottom: 0.25rem;
             }
             .body-text-mobile {
-                color: rgba(255, 255, 255, 0.95) !important; /* 모바일 고대비 */
+                color: rgba(255, 255, 255, 0.95) !important; /* 모바일 전용 고대비 */
                 font-size: 1rem;
                 line-height: 1.55;
             }
@@ -71,7 +71,11 @@
                 padding-left: 1.25rem;
                 padding-right: 1.25rem;
             }
-            .header-fixed-label {
+            .header-label-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .fixed-policy-label {
                 margin-top: 0.75rem;
                 align-self: flex-start;
             }
@@ -85,15 +89,20 @@
                 font-weight: 900;
             }
             .section-title {
-                font-size: 4.5rem; /* PC 제목 통일 */
+                font-size: 4.5rem; /* 모든 섹션 제목 크기 통일 */
             }
             .section-padding {
                 padding-top: 6rem;
                 padding-bottom: 6rem;
             }
-            .header-fixed-label {
+            .header-label-container {
+                flex-direction: row;
+                align-items: flex-end;
+                justify-content: space-between;
+            }
+            .fixed-policy-label {
                 align-self: flex-end;
-                margin-bottom: 1.5rem;
+                margin-bottom: 1.5rem; /* 제목 베이스라인과 맞춤 */
             }
         }
 
@@ -101,6 +110,11 @@
             background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+
+        .text-highlight {
+            color: #818cf8; /* Indigo-400: 페이지 톤앤매너에 맞춘 강조색 */
+            text-decoration-color: rgba(129, 140, 248, 0.4);
         }
 
         .search-container:focus-within {
@@ -278,11 +292,11 @@
                   <h1 className="hero-title text-gradient uppercase mb-6 tracking-tighter">
                     EPLIM AI<br />GOVERNANCE
                   </h1>
-                  <p className="body-text-mobile text-white/60 max-w-3xl mx-auto font-medium mb-12 lg:text-2xl lg:leading-relaxed">
-                    이플림의 혁신을 이끄는 <span className="text-white underline underline-offset-8 decoration-indigo-500/50">AI원칙과 실무 지침</span>
+                  <p className="body-text-mobile text-white/60 max-w-3xl mx-auto font-medium mb-12 lg:text-2xl lg:leading-relaxed px-2">
+                    이플림의 혁신을 이끄는 <span className="text-highlight underline underline-offset-8 font-bold">AI원칙과 실무 지침</span>
                   </p>
                   
-                  {/* Search Bar - Microscope Icon on Right Edge */}
+                  {/* Search Bar */}
                   <div className="max-w-xl mx-auto relative group">
                     <div className="relative overflow-hidden rounded-2xl lg:rounded-3xl border border-white/20 bg-white/5 backdrop-blur-xl transition-all search-container">
                       <input 
@@ -297,7 +311,6 @@
                       </div>
                     </div>
                     
-                    {/* Search Results Dropdown */}
                     {searchResults.length > 0 && (
                       <div className="absolute top-full left-0 right-0 mt-3 glass-panel border border-white/20 rounded-2xl overflow-hidden z-50 shadow-2xl search-results-dropdown text-left">
                         {searchResults.map((result, idx) => (
@@ -317,14 +330,14 @@
 
               <main className="container mx-auto px-4 lg:px-8 space-y-16 lg:space-y-48 pb-32">
                 
-                {/* 1. AI Regulation (AI 규정) */}
+                {/* 1. AI Regulation */}
                 <section id="규정" className="scroll-mt-32 section-padding">
-                  <div className="flex flex-col lg:flex-row lg:items-end justify-between border-b border-white/10 pb-6 lg:pb-12 mb-10 lg:mb-16">
+                  <div className="flex header-label-container border-b border-white/10 pb-6 lg:pb-12 mb-10 lg:mb-16">
                     <div className="space-y-2 lg:space-y-4">
                       <h2 className="section-title text-gradient">AI 규정</h2>
                       <p className="body-text-mobile lg:text-2xl font-bold opacity-80">이플림의 모든 AI 활용의 근간이 되는 최상위 원칙</p>
                     </div>
-                    <span className="header-fixed-label inline-block w-fit px-3 py-1 bg-indigo-500/20 text-indigo-300 text-[10px] lg:text-xs font-black uppercase tracking-[0.3em] border border-indigo-500/30 rounded-full">FIXED POLICY</span>
+                    <span className="fixed-policy-label inline-block w-fit px-3 py-1 bg-indigo-500/20 text-indigo-300 text-[10px] lg:text-xs font-black uppercase tracking-[0.3em] border border-indigo-500/30 rounded-full">FIXED POLICY</span>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-10">
                     {GOVERNANCE_DATA.constitution.map(r => (
@@ -337,14 +350,14 @@
                   </div>
                 </section>
 
-                {/* 2. Common Rules (공통 운영 규칙) */}
+                {/* 2. Common Rules */}
                 <section id="공통규칙" className="scroll-mt-32 section-padding">
-                  <div className="flex flex-col lg:flex-row lg:items-end justify-between border-b border-white/10 pb-6 lg:pb-12 mb-10 lg:mb-16">
+                  <div className="flex header-label-container border-b border-white/10 pb-6 lg:pb-12 mb-10 lg:mb-16">
                     <div className="space-y-2 lg:space-y-4">
                       <h2 className="section-title text-gradient">공통 운영 규칙</h2>
                       <p className="body-text-mobile lg:text-2xl font-bold opacity-80">실무 프로세스 전반에 적용되는 실행 지침</p>
                     </div>
-                    <span className="header-fixed-label inline-block w-fit px-3 py-1 bg-indigo-500/10 text-white/40 text-[10px] lg:text-xs font-black uppercase tracking-[0.3em] border border-white/10 rounded-full">OPERATIONAL</span>
+                    <span className="fixed-policy-label inline-block w-fit px-3 py-1 bg-indigo-500/10 text-white/40 text-[10px] lg:text-xs font-black uppercase tracking-[0.3em] border border-white/10 rounded-full">OPERATIONAL</span>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-12">
                     {GOVERNANCE_DATA.commonRules.map(r => (
@@ -366,14 +379,14 @@
                   </div>
                 </section>
 
-                {/* 3. Modular Guidelines (모듈별 가이드라인) */}
+                {/* 3. Modular Guidelines */}
                 <section id="모듈가이드" className="scroll-mt-32 section-padding">
-                  <div className="flex flex-col lg:flex-row lg:items-end justify-between border-b border-white/10 pb-6 lg:pb-12 mb-10 lg:mb-16">
+                  <div className="flex header-label-container border-b border-white/10 pb-6 lg:pb-12 mb-10 lg:mb-16">
                     <div className="space-y-2 lg:space-y-4">
                       <h2 className="section-title text-gradient">모듈별 가이드라인</h2>
                       <p className="body-text-mobile lg:text-2xl font-bold opacity-80">각 비즈니스 영역별 특화 수칙</p>
                     </div>
-                    <span className="header-fixed-label inline-block w-fit px-3 py-1 bg-indigo-500/10 text-white/40 text-[10px] lg:text-xs font-black uppercase tracking-[0.3em] border border-white/10 rounded-full">SPECIFIC</span>
+                    <span className="fixed-policy-label inline-block w-fit px-3 py-1 bg-indigo-500/10 text-white/40 text-[10px] lg:text-xs font-black uppercase tracking-[0.3em] border border-white/10 rounded-full">SPECIFIC</span>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-10">
                     {GOVERNANCE_DATA.modules.map(m => (
@@ -398,7 +411,7 @@
                   </div>
                 </section>
 
-                {/* FAQ Section */}
+                {/* FAQ */}
                 <section id="FAQ" className="max-w-4xl mx-auto scroll-mt-32 section-padding px-1">
                   <div className="text-center mb-12 lg:mb-20">
                     <HelpCircle className="w-12 h-12 lg:w-16 lg:h-16 text-indigo-500 mx-auto mb-6" />
@@ -456,7 +469,7 @@
                 </div>
               </footer>
 
-              {/* AI Assistant Overlay */}
+              {/* AI Assistant */}
               {isAssistantOpen && (
                 <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center p-0 md:p-6 animate-in fade-in duration-300">
                   <div className="absolute inset-0 bg-black/98 backdrop-blur-3xl" onClick={() => setIsAssistantOpen(false)} />
