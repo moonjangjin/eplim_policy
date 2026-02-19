@@ -117,7 +117,7 @@ const MissionPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => (
         <div className="inline-flex items-center gap-3 badge-policy mx-auto"><Sparkles size={16}/> Our Mission</div>
         <div className="space-y-10">
           <h1 className="hero-title leading-[1.15] font-black uppercase tracking-tighter text-white">사소한 문제를<br/><span className="text-indigo-400 drop-shadow-[0_10px_30px_rgba(99,102,241,0.4)]">정보자산</span>으로 구축합니다.</h1>
-          <p className="text-xl md:text-3xl text-white max-w-4xl mx-auto font-medium leading-relaxed">사람들이 검색으로 해결하려는 반복적인 문제의<br className="hidden md:block" />질문을 <span className="text-indigo-400 font-black text-2xl md:text-4xl">이플's 아카이브</span>로 정제합니다.</p>
+          <p className="text-xl md:text-3xl text-white max-w-4xl mx-auto font-medium leading-relaxed">사람들이 검색으로 해결하려는 반복적인 문제의<br className="hidden md:block" />질문을 <span className="text-indigo-400 font-black text-2xl md:text-4xl">이플림 아카이브</span>로 정제합니다.</p>
         </div>
       </div>
       <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 lg:gap-16 relative py-12">
