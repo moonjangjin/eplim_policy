@@ -24,3 +24,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# OS generated files
+Thumbs.db
+db.json
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

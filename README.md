@@ -1,20 +1,44 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# EPLIM AGI GOVERNANCE
 
-# Run and deploy your AI Studio app
+Official governance portal for the EPLIM AGI Framework. This project establishes the principles, rules, and guidelines for the responsible use and management of AGI within the organization.
 
-This contains everything you need to run your app locally.
+## 🚀 Key Features
 
-View your app in AI Studio: https://ai.studio/apps/af98b928-5cbe-4633-8467-4e26ead51663
+- **AGI Constitution**: Core principles for human-centric AI development.
+- **Operational Rules**: Practical guidelines for prompt engineering and verification.
+- **Module-Specific Governance**: Tailored rules for Content, E-commerce, Productivity, Data Analysis, and Automation.
+- **AI Assistant**: Integrated AGI helper to answer questions about the governance framework.
+- **Global Search**: Quickly find specific rules or guidelines across the entire framework.
 
-## Run Locally
+## 🛠 Tech Stack
 
-**Prerequisites:**  Node.js
+- **React 19**
+- **Vite**
+- **TypeScript**
+- **Tailwind CSS v4**
+- **Lucide React** (Icons)
+- **Google Gemini API** (AI Assistant)
 
+## 📦 Deployment
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+This project is configured for automatic deployment to GitHub Pages via GitHub Actions.
+
+### Setup
+
+1. **Environment Variables**:
+   - Ensure `GEMINI_API_KEY` is set in your GitHub Repository Secrets for the AI Assistant to function in production.
+
+2. **Local Development**:
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+3. **Build**:
+   ```bash
+   npm run build
+   ```
+
+## 📜 License
+
+© 2025 EPLIM Governance Board. Restricted Internal Access.

@@ -1,6 +1,5 @@
 {
   "name": "EPLIM AGI GOV",
   "description": "이플림의 AGI 거버넌스 및 운영 정책을 관리하는 모바일 최적화 포털입니다.",
-  "requestFramePermissions": [],
-  "homepage": "https://moonjangjin.github.io/eplim_policy"
+  "requestFramePermissions": []
 }
