@@ -18,18 +18,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-```
-
-5. **`Commit changes`** 클릭
-
----
-
-## 앞으로의 흐름 변경 제안
-
-AI Studio Sync는 신뢰할 수 없으므로 아래 흐름으로 고정하세요:
-```
-AI Studio 수정
-      ↓
-GitHub 웹에서 해당 파일만 직접 수정
-      ↓
-Actions 자동 실행 → 배포 완료

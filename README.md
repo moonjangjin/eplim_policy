@@ -42,3 +42,6 @@ This project is configured for automatic deployment to GitHub Pages via GitHub A
 ## 📜 License
 
 © 2025 EPLIM Governance Board. Restricted Internal Access.
+
+---
+*Last Updated: 2026-02-18*

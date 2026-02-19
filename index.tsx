@@ -187,6 +187,15 @@ const ModuleDetailPage: React.FC<{ moduleId: string, onBack: () => void, onNavig
                     <span className="group-hover:text-indigo-400 transition-colors">{s.icon}</span>{s.title.split('.')[1].trim()}
                   </button>
                 ))}
+                {moduleId === 'm2' && (
+                  <button 
+                    onClick={() => window.open('https://cafe.naver.com/eplimsupporters', '_blank')}
+                    className="mt-6 flex items-center justify-between px-6 py-5 rounded-2xl bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 hover:text-indigo-300 text-sm font-black transition-all border border-indigo-500/30 hover:border-indigo-500/50 group shadow-[0_0_20px_rgba(99,102,241,0.1)]"
+                  >
+                    <span>실무 가이드</span>
+                    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                  </button>
+                )}
               </nav>
             </div>
           </div>
@@ -344,12 +353,41 @@ const App = () => {
 
   const handleSendMessage = async () => {
     if (!chatInput.trim() || isTyping) return;
-    const msg = chatInput; setChatInput(''); setChatHistory(h => [...h, { role: 'user', content: msg }]); setIsTyping(true);
+    const msg = chatInput; 
+    setChatInput(''); 
+    setChatHistory(h => [...h, { role: 'user', content: msg }]); 
+    setIsTyping(true);
+    
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-      const response = await ai.models.generateContent({ model: 'gemini-3-flash-preview', contents: `Context: ${JSON.stringify(GOVERNANCE_DATA)}\nQuestion: ${msg}\nRespond in Korean concisely based on governance.`, });
-      setChatHistory(h => [...h, { role: 'assistant', content: response.text }]);
-    } catch (e) { setChatHistory(h => [...h, { role: 'assistant', content: '연결 오류가 발생했습니다.' }]); } finally { setIsTyping(false); }
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg, context: GOVERNANCE_DATA }),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'SERVER_ERROR');
+      }
+      
+      if (data.text) {
+        setChatHistory(h => [...h, { role: 'assistant', content: data.text }]);
+      } else {
+        throw new Error('EMPTY_RESPONSE');
+      }
+    } catch (e: any) { 
+      console.error('Chat Error:', e);
+      let errorMsg = '연결 오류가 발생했습니다.';
+      if (e.message === 'API_KEY_MISSING') {
+        errorMsg = '서버 설정 오류입니다. (API 키 누락)';
+      } else if (e.message?.includes('quota') || e.message === 'RESOURCE_EXHAUSTED') {
+        errorMsg = 'API 할당량이 초과되었습니다. 잠시 후 다시 시도해주세요.';
+      }
+      setChatHistory(h => [...h, { role: 'assistant', content: errorMsg }]); 
+    } finally { 
+      setIsTyping(false); 
+    }
   };
 
   if (view === 'mission') return <MissionPage onEnter={() => setView('main')}/>;
@@ -406,7 +444,7 @@ const App = () => {
           </section>
         </div>
       </main>
-      <footer className="py-16 border-t border-white/20 bg-black/60 text-center content-padding"><div className="section-container space-y-6"><Shield size={28} className="text-indigo-500 mx-auto" /><div className="space-y-2"><p className="text-lg font-black tracking-tighter uppercase">EPLIM AGI <span className="text-indigo-400">FRAMEWORK</span></p><p className="text-[0.65rem] text-white/70 uppercase tracking-[0.35em] font-black max-w-2xl mx-auto leading-loose">© 2025 EPLIM Governance Board. Restricted Internal Access.</p></div></div></footer>
+      <footer className="py-16 border-t border-white/20 bg-black/60 text-center content-padding"><div className="section-container space-y-6"><Shield size={28} className="text-indigo-500 mx-auto" /><div className="space-y-2"><p className="text-lg font-black tracking-tighter uppercase">EPLIM AGI <span className="text-indigo-400">FRAMEWORK</span></p><p className="text-[0.65rem] text-white/70 uppercase tracking-[0.35em] font-black max-w-2xl mx-auto leading-loose">© 2025 EPLIM Governance Board. Restricted Internal Access.</p><p className="text-[0.65rem] text-white/50 font-medium max-w-3xl mx-auto leading-loose mt-2">본 자료는 EPLIM의 지적재산으로 무단 복사·복제·배포 시 관련 법령에 따라 형사 처벌을 포함한 법적 책임을 집니다.</p></div></div></footer>
       {isAssistantOpen && (
         <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center p-0 md:p-12 animate-fade-in">
           <div className="absolute inset-0 bg-black/95 backdrop-blur-3xl" onClick={() => setIsAssistantOpen(false)} />
