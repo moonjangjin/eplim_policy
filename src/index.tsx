@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import ReactDOM from 'react-dom/client';
+import './index.css';
 import { 
   Shield, Box, MessageSquare, ChevronRight, CheckCircle2, 
   Sparkles, X, Send, ChevronDown, Search, Info, Mail, User, Layers,
